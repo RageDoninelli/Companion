@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>V.I.V.A. Companion A1</title>
+<meta name="theme-color" content="#12264A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12264A;--chalk:#F5F7FB;--hl:#FFC83D;--ok:#1F9D6B;--bad:#E5484D;--mut:#5B6B86;--line:#D5DCE8}
+*{box-sizing:border-box;margin:0}
+body{font:16px/1.5 'DM Sans',system-ui,sans-serif;background:var(--chalk);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#app{max-width:480px;margin:0 auto;padding:16px 16px 48px}
+h1,h3,.num{font-family:Syne,system-ui,sans-serif;font-weight:800}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+.brand h1{font-size:28px;line-height:1.1}
+.brand p{color:var(--mut);margin-top:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.mod{position:relative;text-align:left;border:2px solid var(--ink);background:#fff;border-radius:14px;padding:12px 12px 28px;min-height:120px;display:block;width:100%}
+.mod .num{display:block;font-size:36px;line-height:1;margin-bottom:6px}
+.mod b{display:block;line-height:1.2}
+.mod small{display:block;color:var(--mut);margin-top:3px;line-height:1.3}
+.mod.off{border:2px dashed var(--line);color:#9AA6BC;background:transparent}
+.mod .bar{position:absolute;left:12px;right:12px;bottom:10px;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.mod .bar i{display:block;height:100%;background:var(--ok)}
+.back{border:0;background:none;font-weight:700;padding:8px 0;margin-bottom:8px}
+.hd{display:flex;gap:16px;align-items:center;background:var(--ink);color:#fff;border-radius:16px;padding:18px}
+.hd .num{font-size:64px;line-height:1;color:var(--hl)}
+.hd h1{font-size:24px;line-height:1.15}
+.hd p{opacity:.8;font-size:14px;margin-top:4px}
+.ex{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px}
+.ex h3{font-size:17px;line-height:1.3;display:flex;gap:10px;align-items:flex-start}
+.ex h3 b{flex:none;white-space:nowrap;background:var(--hl);border-radius:6px;padding:0 8px;min-width:30px;text-align:center}
+.ex h3 span{min-width:0;overflow-wrap:anywhere}
+.hint{color:var(--mut);font-size:14px;margin:6px 0 0}
+.bank{margin-top:8px}
+.bank span{display:inline-block;background:#FFF1C2;border-radius:6px;padding:1px 9px;margin:3px 4px 0 0}
+.items{margin-top:8px}
+.cols .items{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
+.sub{font-weight:700;color:var(--mut);margin-top:12px;font-size:14px}
+.ln{margin:6px 0;line-height:2.1}
+u{text-decoration:none;border-bottom:3px solid var(--hl);font-weight:700}
+input.b{font:inherit;border:0;border-bottom:2px solid var(--ink);border-radius:0;background:transparent;text-align:center;color:var(--ink);padding:0 2px;max-width:100%}
+input.b:focus,select:focus{outline:none;background:#FFF8DD}
+.ok{border-color:var(--ok)!important;color:var(--ok)}
+.no{border-color:var(--bad)!important;color:var(--bad)}
+.o{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.o button{border:2px solid var(--ink);background:#fff;border-radius:10px;padding:4px 12px}
+.o button.sel{background:var(--ink);color:#fff}
+.o.ok button.sel{background:var(--ok);border-color:var(--ok)}
+.o.no button.sel{background:var(--bad);border-color:var(--bad)}
+select.o{display:block;width:100%;font:inherit;padding:6px;border:2px solid var(--ink);border-radius:10px;background:#fff;margin-bottom:6px}
+.act{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.act button{border:2px solid var(--ink);background:#fff;border-radius:10px;padding:6px 12px;font-size:14px}
+.act .pri{background:var(--ink);color:#fff;font-weight:700}
+.res{margin-top:8px;font-weight:700;min-height:1.5em}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var MODS={},N=16,KEY='viva-companion-a1',app=document.getElementById('app'),st={};
+try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const norm=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,'').replace(/[.!?]+$/,'');
+const cnt=m=>m.ex.reduce((s,e)=>s+e.items.reduce((t,i)=>t+(typeof i=='string'?(i.match(/\{[^}]+\}/g)||[]).length:1),0),0);
+
+function home(){
+  let h='<div class="brand"><h1>V.I.V.A. Companion A1</h1><p>Gramática de inglés, módulo por módulo.</p></div><div class="grid">';
+  for(let n=1;n<=N;n++){
+    const m=MODS[n];
+    if(!m){h+=`<div class="mod off"><span class="num">${n}</span><small>Próximamente</small></div>`;continue}
+    const ok=Object.values(st[n]||{}).reduce((s,x)=>s+x.ok,0),p=Math.min(100,Math.round(ok/cnt(m)*100));
+    h+=`<button class="mod" data-go="m${n}"><span class="num">${n}</span><b>${m.title}</b><small>${m.topic}</small><span class="bar"><i style="width:${p}%"></i></span></button>`;
+  }
+  app.innerHTML=h+'</div>';
+}
+
+function item(i){
+  if(typeof i=='string'){
+    if(i[0]=='#')return `<p class="sub">${i.slice(1).trim()}</p>`;
+    return '<p class="ln">'+i.replace(/\n/g,'<br>').replace(/\{([^}]+)\}|\[([^\]]+)\]/g,(_,a,x)=>x?`<u>${x}</u>`:`<input class="b" data-a="${a}" style="width:${Math.min(Math.max(a.split('|')[0].length+2,4),30)}ch" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">`)+'</p>';
+  }
+  const op=i.o.length>4
+    ?`<select class="o" data-a="${i.a}"><option value="">Elige…</option>${i.o.map((t,k)=>`<option value="${k}">${t}</option>`).join('')}</select>`
+    :`<span class="o" data-a="${i.a}">${i.o.map((t,k)=>`<button data-k="${k}">${t}</button>`).join('')}</span>`;
+  return `<div class="ln">${i.p}</div>${op}`;
+}
+
+function card(e){
+  return `<section class="ex${e.cols?' cols':''}" data-n="${e.n}"><h3><b>${e.n}</b><span>${e.t}</span></h3>${e.h?`<p class="hint">${e.h}</p>`:''}${e.bank?`<p class="bank">${e.bank.map(w=>`<span>${w}</span>`).join('')}</p>`:''}<div class="items">${e.items.map(item).join('')}</div><div class="act"><button class="pri" data-act="chk">Comprobar</button><button data-act="ans">Ver respuestas</button><button data-act="rst">Reiniciar</button></div><p class="res"></p></section>`;
+}
+
+function mod(n){
+  const m=MODS[n];
+  app.innerHTML=`<button class="back" data-go="">‹ Módulos</button><header class="hd"><span class="num">${n}</span><div><h1>${m.title}</h1><p>${m.topic}</p></div></header>${m.ex.map(card).join('')}`;
+  scrollTo(0,0);
+}
+
+const val=g=>g.tagName=='SELECT'?g.value:g.dataset.v;
+function check(c){
+  let ok=0,t=0;
+  c.querySelectorAll('.b').forEach(el=>{t++;const g=el.dataset.a.split('|').some(a=>norm(a)==norm(el.value));ok+=+g;el.classList.toggle('ok',g);el.classList.toggle('no',!g)});
+  c.querySelectorAll('.o').forEach(el=>{t++;const g=val(el)==el.dataset.a;ok+=+g;el.classList.toggle('ok',g);el.classList.toggle('no',!g)});
+  c.querySelector('.res').textContent=ok+' de '+t+(ok==t?' — ¡Perfecto!':' — Corrige lo marcado en rojo');
+  const n=+location.hash.slice(2),prev=(st[n]||{})[c.dataset.n]||{ok:0};
+  (st[n]=st[n]||{})[c.dataset.n]={ok:Math.max(prev.ok,ok),t};
+  try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}
+}
+function setSel(el,k){
+  if(el.tagName=='SELECT'){el.value=k}
+  else{el.dataset.v=k;el.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.k==k))}
+}
+function show(c){
+  c.querySelectorAll('.b').forEach(el=>{el.value=el.dataset.a.split('|')[0];el.className='b ok'});
+  c.querySelectorAll('.o').forEach(el=>{setSel(el,el.dataset.a);el.classList.remove('no');el.classList.add('ok')});
+}
+function reset(c){
+  c.querySelectorAll('.b').forEach(el=>{el.value='';el.className='b'});
+  c.querySelectorAll('.o').forEach(el=>{setSel(el,'');el.classList.remove('ok','no')});
+  c.querySelector('.res').textContent='';
+}
+
+app.onclick=ev=>{
+  const t=ev.target;
+  if(t.matches('.o button')){const g=t.parentNode;setSel(g,t.dataset.k);g.classList.remove('ok','no');return}
+  const c=t.closest('.ex');
+  if(t.dataset.act=='chk')check(c);
+  if(t.dataset.act=='ans')show(c);
+  if(t.dataset.act=='rst')reset(c);
+  const go=t.closest('[data-go]');
+  if(go)location.hash=go.dataset.go;
+};
+app.onchange=ev=>{if(ev.target.matches('select.o'))ev.target.classList.remove('ok','no')};
+
+function route(){
+  const m=/^#m(\d+)$/.exec(location.hash);
+  m&&MODS[+m[1]]?mod(+m[1]):home();
+}
+addEventListener('hashchange',route);
+
+// Carga m01.js … m16.js (los que no existan se ignoran)
+let pending=N;
+for(let i=1;i<=N;i++){
+  const s=document.createElement('script');
+  s.src='m'+String(i).padStart(2,'0')+'.js';
+  s.onload=s.onerror=()=>{if(--pending==0)route()};
+  document.body.appendChild(s);
+}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
