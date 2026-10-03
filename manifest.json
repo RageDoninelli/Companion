@@ -1,18 +1,16 @@
 {
-  "id": "viva-companion-a1",
   "name": "V.I.V.A. Companion A1",
   "short_name": "Companion A1",
   "description": "Ejercicios de gramática de inglés A1, módulo por módulo.",
-  "start_url": "./index.html?src=pwa",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#F5F7FB",
   "theme_color": "#12264A",
   "lang": "es",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
